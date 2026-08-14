@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pleco Bushynose Red</title>
+  <style>
+    
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a18; }
+  .app { max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .input-section { background: white; border: 0.5px solid #ddd; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+  .input-section h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444; }
+  .step { margin-bottom: 1.5rem; }
+  .step label { display: block; font-size: 0.875rem; font-weight: 600; color: #333; margin-bottom: 0.25rem; }
+  .step .hint { font-size: 0.8rem; color: #999; margin-bottom: 0.5rem; }
+  textarea { width: 100%; border: 0.5px solid #ccc; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.875rem; font-family: inherit; resize: vertical; outline: none; transition: border-color 0.15s; min-height: 120px; }
+  textarea:focus { border-color: #378ADD; }
+
+  .folder-drop { border: 2px dashed #ccc; border-radius: 10px; padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.15s; background: #fafaf8; position: relative; }
+  .folder-drop:hover { border-color: #1D9E75; background: #f0faf6; }
+  .folder-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .folder-drop .drop-icon { font-size: 1.75rem; margin-bottom: 0.4rem; }
+  .folder-drop .drop-text { font-size: 0.9rem; color: #555; }
+  .folder-drop .drop-sub { font-size: 0.8rem; color: #aaa; margin-top: 0.2rem; }
+
+  .image-status { margin-top: 0.75rem; }
+  .status-summary { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
+  .image-pill { display: inline-flex; align-items: center; background: #E1F5EE; color: #085041; border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.78rem; margin: 0.2rem; }
+
+  .info-note { background: #E6F1FB; border: 0.5px solid #B5D4F4; border-radius: 8px; padding: 0.75rem 1rem; color: #0C447C; font-size: 0.82rem; margin-top: 0.75rem; }
+  .error { background: #FCEBEB; border: 0.5px solid #F09595; border-radius: 8px; padding: 0.75rem 1rem; color: #A32D2D; font-size: 0.875rem; margin-top: 1rem; }
+
+  .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+  button { padding: 0.5rem 1.25rem; border-radius: 8px; font-size: 0.9rem; font-family: inherit; cursor: pointer; transition: all 0.15s; border: 0.5px solid #ccc; background: white; color: #333; }
+  button:hover { background: #f5f5f0; border-color: #aaa; }
+  button.primary { background: #1a1a18; color: white; border-color: #1a1a18; }
+  button.primary:hover { background: #333; }
+  button.print-btn { background: #0F6E56; color: white; border-color: #0F6E56; }
+  button.print-btn:hover { background: #085041; }
+  button.save-btn { background: #1a4fa0; color: white; border-color: #1a4fa0; }
+  button.save-btn:hover { background: #153d80; }
+  button.save-btn:disabled { background: #7a9fd4; border-color: #7a9fd4; cursor: not-allowed; }
+  button.zip-btn { background: #7B2D8B; color: white; border-color: #7B2D8B; }
+  button.zip-btn:hover { background: #5e1f6e; }
+  button.zip-btn:disabled { background: #b87fc4; border-color: #b87fc4; cursor: not-allowed; }
+
+  /* Output */
+  #card-output { display: none; }
+  .print-bar { display: flex; align-items: center; justify-content: space-between; background: white; border: 0.5px solid #ddd; border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem; }
+  .print-bar span { font-size: 0.875rem; color: #666; }
+
+  .save-progress { display: none; background: #E6F1FB; border: 0.5px solid #B5D4F4; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .save-progress-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+  .progress-bar { height: 6px; background: #c8dff5; border-radius: 3px; margin-top: 0.75rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 3px; width: 0%; transition: width 0.3s; }
+
+  /* ── Mobile Fish Card ── */
+  /* Each card is designed to look like a phone screen: 390px wide */
+  .cards-container { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: flex-start; }
+
+  .fish-card {
+    width: 390px;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 0.5px solid #ddd;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .card-header {
+    background: #0099B0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 1.25rem 1rem;
+    color: white;
+    text-align: center;
+  }
+  .card-header h2 { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+  .card-header .sci-name { font-size: 0.8rem; font-style: italic; opacity: 0.85; margin-top: 0.25rem; font-weight: 400; }
+
+  /* Full-width image — natural size, no cropping */
+  .fish-image-container { width: 100%; background: #f0f0eb; }
+  .fish-image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .image-footnote {
+    font-size: 0.6rem; color: #999; font-style: italic;
+    text-align: center; padding: 0.3rem 0.5rem;
+    background: #f8f8f5; line-height: 1.3;
+  }
+  .no-image { height: 180px; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 0.875rem; }
+
+  /* Info tiles — 2 column grid */
+  .card-body { padding: 0.875rem 0.875rem 0; }
+
+  .tile-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.4rem; }
+  .tile-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; margin-bottom: 0.4rem; }
+  .tile-grid-1 { display: grid; grid-template-columns: 1fr; gap: 0.4rem; margin-bottom: 0.4rem; }
+
+  .tile { background: #f8f8f5; border-radius: 8px; padding: 0.5rem 0.6rem; }
+  .tile .t-label { font-size: 0.6rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; }
+  .tile .t-value { font-size: 0.82rem; font-weight: 700; color: #1a1a18; line-height: 1.3; word-break: break-word; }
+
+  /* Sections */
+  .card-sections { padding: 0 0.875rem 0.875rem; }
+  .section-divider { height: 0.5px; background: #eee; margin: 0.6rem 0; }
+  .section-block { margin-bottom: 0.5rem; }
+  .section-block .s-title { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #0099B0; margin-bottom: 0.25rem; }
+  .section-block .s-body { font-size: 0.82rem; font-weight: 600; line-height: 1.5; color: #1a1a18; }
+
+  .card-footer {
+    text-align: center; font-size: 0.65rem; font-weight: 700;
+    color: #999; padding: 0.5rem; background: #f8f8f5;
+    border-top: 0.5px solid #eee; letter-spacing: 0.03em;
+  }
+
+  @media print {
+    body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .app { padding: 0; max-width: 100%; }
+    .input-section, .print-bar, .save-progress { display: none !important; }
+    #card-output { display: block !important; }
+    h1, .subtitle { display: none; }
+    .cards-container { display: block; }
+    .fish-card {
+      width: 100%;
+      max-width: 390px;
+      margin: 0 auto;
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
+      page-break-after: always;
+      break-after: page;
+    }
+    .card-header {
+      background: #0099B0 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .fish-image-container img { width: 100%; height: auto; display: block; }
+    @page { margin: 5mm; }
+  }
+
+    body { margin: 0; background: #f5f5f0; display: flex; justify-content: center; padding: 1rem; }
+    .fish-card { width: 390px; max-width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .card-header { background: #0099B0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .fish-image-container img { max-height: 300px; object-fit: contain; object-position: center; width: 100%; height: auto; display: block; }
+  </style>
+</head>
+<body>
+<div class="fish-card" data-fishname="Pleco Bushynose Red">
+      <div class="card-header">
+        <h2>Pleco Bushynose Red</h2>
+        <div class="sci-name">Ancistrus cirrhosus</div>
+      </div>
+
+      <div class="fish-image-container">
+        <img src="data:image/jpeg;base64,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" alt="Pleco Bushynose Red">
+        <div class="image-footnote">Image is for illustrative purposes only and may not represent all individuals of this species.</div>
+       </div>
+
+      <div class="card-body">
+        <div class="tile-grid-2">
+          <div class="tile"><div class="t-label">Temperament</div><div class="t-value">Peaceful</div></div>
+          <div class="tile"><div class="t-label">Grows To</div><div class="t-value">5"</div></div>
+        </div>
+        <div class="tile-grid-2">
+          <div class="tile"><div class="t-label">Starting Tank Size</div><div class="t-value">10 Gallon</div></div>
+          <div class="tile"><div class="t-label">Typical Color</div><div class="t-value">Solid un-spotted uniform rich pumpkin-orange body</div></div>
+        </div>
+      </div>
+
+      <div class="card-sections">
+        <div class="section-divider"></div><div class="section-block"><div class="s-title">CB's Recommended Fish Food</div><div class="s-body">Sera Pleco Chips<br>Hikari Algae Wafers</div></div>
+        <div class="section-divider"></div><div class="section-block"><div class="s-title">Care Notes</div><div class="s-body">Red Bushynose pleco; peaceful and plant-safe algae eater. Stays small (4 or 5 inches).</div></div>
+      </div>
+
+      <div class="card-body" style="padding-top:0;">
+        <div class="tile-grid-3">
+          <div class="tile"><div class="t-label">Temp Range</div><div class="t-value">76-84°F</div></div>
+          <div class="tile"><div class="t-label">Water PH</div><div class="t-value">7.0-7.6</div></div>
+          <div class="tile"><div class="t-label">Water KH</div><div class="t-value">4-12 dKH</div></div>
+        </div>
+        <div class="tile-grid-1">
+          <div class="tile"><div class="t-label">Origin</div><div class="t-value">South America (Amazon Basin)</div></div>
+        </div>
+        <div class="tile-grid-1">
+          <div class="tile"><div class="t-label">Plant Safety</div><div class="t-value">Safe</div></div>
+        </div>
+      </div>
+
+      <div class="card-footer">©CB's Tropical Aquarium</div>
+    </div>
+</body>
+</html>
